@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mavendeploy
+spec:
+  replicas: 2       
+  strategy:
+    type: RollingUpdate        
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 30
+  selector:
+    matchLabels:
+      app: maven      
+  template:
+    metadata:
+      name: mavenpod      
+      labels:
+        app: maven        
+    spec:
+      containers:
+      - name: mavencontainer
+        image: vishnuvel/java-web-docker:25
+        ports:
+        - containerPort: 8080        
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mavensvc      
+spec:
+  type: ClusterIP
+  selector:
+    app: maven      
+  ports:
+  - port: 80
+    targetPort: 8080        
+         

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mavendeploy
+spec:
+  replicas: 3      
+  strategy:
+    type: Recreate      
+  selector:
+    matchLabels:      
+      app: maven
+  template:
+    metadata:        
+      labels:
+        app: maven        
+    spec:
+      containers:      
+      - name: mavencontainer
+        image: vishnuvel/maven-web-app:2
+        ports:
+        -  containerPort: 8080       
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mavensvc      
+  labels:
+    app: maven      
+spec:
+  type: ClusterIP      
+  selector:
+    app: maven       
+  ports:
+  - port: 80
+    targetPort: 8080        
