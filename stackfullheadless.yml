@@ -22,10 +22,16 @@ spec:
           - containerPort: 27017        
         env:  
           - name: MONGO_INITDB_ROOT_USERNAME
-            value: vishnu
+            valueFrom:
+              configMapKeyRef:
+                name: spring
+                key: mongodbusername
           - name: MONGO_INITDB_ROOT_PASSWORD 
-            value: vishnu@123
-        volumeMounts:
+            valueFrom:
+              secretKeyRef:
+                name: secrete            
+                key: password
+        volumeMounts:                
           - name: mongovol      
             mountPath: /data/db
   volumeClaimTemplates:
@@ -73,16 +79,22 @@ spec:
     spec:
       containers:
       - name: springappcontainer        
-        image: vishnuvel/spring-boot-mongo:latest
+        image: vishnuvel/spring-boot-mongo:25
         ports:
           - containerPort: 8080        
         env:
-          - name:  MONGO_DB_HOSTNAME
-            value: mongosvc         
           - name:  MONGO_DB_USERNAME
-            value: vishnu
+            valueFrom:
+              configMapKeyRef:
+                name: spring
+                key: mongodbusername         
+          - name:  MONGO_DB_HOSTNAME
+            value: mongosvc
           - name: MONGO_DB_PASSWORD
-            value: vishnu@123
+            valueFrom:
+              secretKeyRef:      
+                name: secrete
+                key: password
 ---
 apiVersion: v1
 kind: Service
